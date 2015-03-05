@@ -84,7 +84,7 @@
 					})
 					displayTen(t)
 				}
-				cardRef.goOffline()
+				Firebase.goOffline()
 			})
 		}
 
@@ -127,7 +127,7 @@
 				cardStock[index]["name"] += "...";
 			}
 			cardStock[index]["code"]
-			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' src='http://mtgimage.com/set/" + cardStock[index]["code"]  + "/" + isName + ".jpg'></div><h5><a href='detail.html'>" + isName + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + cardStock[index]["name"] + "</span><span class='number-view pull-right'><i class='icon-white icon-usd'></i>" + cardStock[index]["cost"] + "</span></p></div></li>")
+			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' src='http://mtgimage.com/set/" + cardStock[index]["code"]  + "/" + isName + ".jpg'></div><h5><a href='detail.html'>" + isName + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + cardStock[index]["name"] + "</span><span class='number-view pull-right'><i class='icon-white icon-plus ' style='cursor:pointer'></i></span><span class='number-view pull-right'><i class='icon-white icon-usd text-center'></i>" + cardStock[index]["cost"] + "</span></p></div></li>")
 		}
 
 		function logout(){
