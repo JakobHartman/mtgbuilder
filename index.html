@@ -13,9 +13,20 @@
     <script src="assets/js/custom.js"></script>
     <script type="text/javascript">
     	var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/");
+    	var cardStock = new Array();
+    	var showStock = new Array();
 	    $(document).ready(function(){
 	    	ref.onAuth(authHandaler)
+	    	loadCardsFirst()
+
 	    })
+
+	    function aCard(name,set,cost,image){
+	   		this.name = name;
+	   		this.set = set;
+	   		this.image = image
+	   		this.cost = "0.99";
+	    }
 
 
         function authHandaler(authData,error) {
@@ -38,9 +49,75 @@
 				
 	  		} else {
 	  				console.log(error)
-	  					
-	    		
 	  		}
+		}
+		function loadCardsFirst () {
+			var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards");
+			
+			cardRef.once("value",function(all){
+				for(var t = 0; t < 12;t++){
+					var i = 0;
+					var rand = Math.floor(Math.random() * all.numChildren());
+					all.forEach(function(set){
+						if(i == rand){
+							var e = 0
+							var sets = set.child("name").val()
+							var card = set.child("cards")
+							var newRand = Math.floor(Math.random() * card.numChildren());
+
+							card.forEach(function(aCards){
+								if(e == newRand){
+									var c = aCards.val()
+									var newCard = new aCard(c.name,sets,"0.99",c.imageName)
+									cardStock.push(newCard);
+								}
+								e++
+							})
+						}
+						i++
+					})
+					displayTen(t)
+				}
+			})
+		}
+
+		function loadCards () {
+			var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards");
+			
+			cardRef.once("value",function(all){
+				for(var t = 0; t < 12;t++){
+					var i = 0;
+					var rand = Math.floor(Math.random() * all.numChildren());
+					all.forEach(function(set){
+						if(i == rand){
+							var e = 0
+							var sets = set.child("name").val()
+							var card = set.child("cards")
+							var newRand = Math.floor(Math.random() * card.numChildren());
+
+							card.forEach(function(aCards){
+								if(e == newRand){
+									var c = aCards.val()
+									var newCard = new aCard(c.name,sets,"0.99",c.imageName)
+									cardStock.push(newCard);
+								}
+								e++
+							})
+						}
+						i++
+					})
+					displayTen(t)
+				}
+			})
+		}
+
+		function displayTen(index){
+			console.log("Getting random")
+			if(cardStock[index]["name"].length > 18){
+				cardStock[index]["name"] = cardStock[index]["name"].slice(0,15)
+				cardStock[index]["name"] += "...";
+			}
+			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' src='http://mtgimage.com/setname/" + cardStock[index]["set"]  + "/" + cardStock[index]["image"] + ".jpg'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + cardStock[index]["name"] + "</span><span class='number-view pull-right'><i class='icon-white icon-dallor'></i>" + cardStock[index]["cost"] + "</span></p></div></li>")
 		}
 
 		function logout(){
@@ -106,7 +183,7 @@
 				
 				<div class="row">
 					<div class="title span12">
-						<h3 class="pull-left">Lorem ipsum dolor ...</h3>
+						<h3 class="pull-left">Random Cards</h3>
 						<div class="sort pull-right dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 								Most Viewed
@@ -120,167 +197,15 @@
 						</div>
 					</div><!-- end title -->
 				</div>
-				<ul class="thumbnails thumbnails-horizontal">
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj1.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit  </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj2.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj3.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj4.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj5.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj6.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj7.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span3">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj8.jpg">
-							</div>
-							<h5><a href="detail.html">Lorem ipsum dolor sit </a></h5>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
+				<ul id="cardShow" class="thumbnails thumbnails-horizontal">
+					
 				</ul>
-				<div class="row">
-					<div class="span12">
-						<div class="navigation pagination pull-right">
-							<ul>
-								<li><a href="#">←</a></li>
-								<li><a class="active" href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">→</a></li>
-							</ul>
-						</div>
-					</div><!-- end navigation -->
-				</div>
 			</div><!-- end  -->
 			<!-- **************** start All Flie  ****************** -->
 			<div class="box-wrapper span10">
 				<div class="row">
 					<div class="title span10">
-						<h3 class="pull-left">Lorem ipsum dolor ...</h3>
+						<h3 class="pull-left">Random Decks</h3>
 						<div class="sort pull-right dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 								Most Viewed
