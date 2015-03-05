@@ -9,8 +9,14 @@
 	<!-- js Boots_from -->
 	<script src="assets/js/jquery.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.2/firebase.js"></script>
     <script src="assets/js/custom.js"></script>
-	
+    <script type="text/javascript">
+
+
+    
+    </script>
+
 	<!-- end Boots_from -->
 </head>
 
@@ -20,18 +26,18 @@
 		<div class="row">
 			<div class="login-content span4 offset4">
 				<div class="header-login well">
-					<h3>Login</h3>
+					<h3>MTG Deck Builder Login</h3>
 				</div>
 				<form class="well">
 					<label>Username</label>
-					<input type="text" class="input" placeholder="Type something…">
+					<input type="text" id="loginUsername" class="input" placeholder="Username">
 					<label>Password</label>
-					<input type="text" class="input" placeholder="Type something…">
+					<input type="password" id="loginPassword" class="input" placeholder="Password">
 
 					<label class="checkbox">
-				    	<input type="checkbox"> Check me out
+				    	<input id="checkToRemember" type="checkbox"> Remember Me
 					</label>
-				  	<a href="index.html" type="submit" class="btn btn-info">Submit</a>
+				  	<a id="loginSubmit" class="btn btn-info">Submit</a>
 				  	<p class="sign-up-lg">Don't have an account? <a href="sign-up.html">Sign Up.</a></p>
 				</form>	
 			</div>

@@ -9,7 +9,48 @@
 	<!-- js Boots_from -->
 	<script src="assets/js/jquery.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.2/firebase.js"></script>
     <script src="assets/js/custom.js"></script>
+    <script type="text/javascript">
+    	var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/");
+	    $(document).ready(function(){
+	    	ref.onAuth(authHandaler)
+	    })
+
+
+        function authHandaler(authData,error) {
+	  		if (authData) {
+				var newRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users");
+				var name = authData.password.email;
+				newRef.orderByChild("email").equalTo(name).limitToFirst(1).on("value",function(data){
+					data.forEach(function(child){
+						$("#userPic").remove();
+						$("#userDrop").remove();
+						var userData = child.val()
+						console.log(userData)
+						$("#loginArea").remove()
+						$(".nav.pull-right").append("<li id='userPic' class='avatar_small'><a href='account.html'></a></li>")
+						$(".nav.pull-right").append("<li id='userDrop'class='dropdown'><a class='dropdown-toggle' href='#' data-toggle='dropdown' id='usernameSlot'>" + userData["username"] + "<b class='caret'></b></a><ul class='dropdown-menu'><li><a href='profile.html'><i class='icon-user'></i>Account Setting  </a></li><li><a href='setting.html'><i class='icon-lock'></i> Change Password</a></li><li class='divider'></li><li><a id='logoutUser'><i class='icon-off'></i> Logout</a></li></ul></li>")
+						$("#logoutUser").bind("click",logout)
+					})
+					
+				})
+				
+	  		} else {
+	  				console.log(error)
+	  					
+	    		
+	  		}
+		}
+
+		function logout(){
+			ref.unauth()
+			ref.onAuth(authHandaler)
+			window.location.replace("index.html");
+		}
+
+    
+    </script>
 	<!-- end Boots_from -->
 </head>
 
@@ -32,44 +73,14 @@
             			<ul class="dropdown-menu">
 							<li>
 								<a href="profile.html">
-									<i class="icon-user"></i>
-									Account Setting  </a>
-							</li>
-							<li>
-								<a href="setting.html">
-									<i class="icon-lock"></i> Change Password</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="login.html"><i class="icon-off"></i> Logout</a>
+									<i class="icon-plus"></i>
+									New Deck  </a>
 							</li>
 						</ul>
             		</li>
               		<li><a href="element.html">Library</a></li>
               		<li class="divider-vertical"></li>
-
-              		<li class="avatar_small"><a href="account.html"></a></li>
-            		<li class="dropdown">
-            			<a class="dropdown-toggle" href="#" data-toggle="dropdown">
-	            			john doe
-	            			<b class="caret"></b>
-            			</a>
-            			<ul class="dropdown-menu">
-							<li>
-								<a href="profile.html">
-									<i class="icon-user"></i>
-									Account Setting  </a>
-							</li>
-							<li>
-								<a href="setting.html">
-									<i class="icon-lock"></i> Change Password</a>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<a href="login.html"><i class="icon-off"></i> Logout</a>
-							</li>
-						</ul>
-            		</li>
+              		<li id="loginArea"><a href="login.html">Login</a></li>
             	</ul>
 			</div>
 		</div>
@@ -507,7 +518,7 @@
 		<div class="row">
 			<div class="span6 logo-vt">
 				<a class="brand" href="#">
-					<span>Choose</span><span class="cl-blue">Logo</span>
+					<span>MTG</span><span class="cl-blue">Deck Builder</span>
 				</a>
 				<span class="coppy_right">
 					<p>Lorem ipsum dolor sit </p>
