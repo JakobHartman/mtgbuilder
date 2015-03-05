@@ -21,9 +21,10 @@
 
 	    })
 
-	    function aCard(name,set,cost,image){
+	    function aCard(name,set,code,cost,image){
 	   		this.name = name;
 	   		this.set = set;
+	   		this.code = code;
 	   		this.image = image
 	   		this.cost = "0.99";
 	    }
@@ -43,6 +44,10 @@
 						$(".nav.pull-right").append("<li id='userPic' class='avatar_small'><a href='account.html'></a></li>")
 						$(".nav.pull-right").append("<li id='userDrop'class='dropdown'><a class='dropdown-toggle' href='#' data-toggle='dropdown' id='usernameSlot'>" + userData["username"] + "<b class='caret'></b></a><ul class='dropdown-menu'><li><a href='profile.html'><i class='icon-user'></i>Account Setting  </a></li><li><a href='setting.html'><i class='icon-lock'></i> Change Password</a></li><li class='divider'></li><li><a id='logoutUser'><i class='icon-off'></i> Logout</a></li></ul></li>")
 						$("#logoutUser").bind("click",logout)
+						var decks = child.child("Decks");
+							decks.forEach(function(deck){
+								$("#dropSlots").append("<li><a>" + deck.val().name + "</a></li>")
+							})
 					})
 					
 				})
@@ -62,13 +67,14 @@
 						if(i == rand){
 							var e = 0
 							var sets = set.child("name").val()
+							var code = set.child("code").val()
 							var card = set.child("cards")
 							var newRand = Math.floor(Math.random() * card.numChildren());
 
 							card.forEach(function(aCards){
 								if(e == newRand){
 									var c = aCards.val()
-									var newCard = new aCard(c.name,sets,"0.99",c.imageName)
+									var newCard = new aCard(c.name,sets,code,"0.99",c.imageName)
 									cardStock.push(newCard);
 								}
 								e++
@@ -78,12 +84,13 @@
 					})
 					displayTen(t)
 				}
+				cardRef.goOffline()
 			})
 		}
 
 		function loadCards () {
 			var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards");
-			
+			$("#cardShow").html("")
 			cardRef.once("value",function(all){
 				for(var t = 0; t < 12;t++){
 					var i = 0;
@@ -92,13 +99,14 @@
 						if(i == rand){
 							var e = 0
 							var sets = set.child("name").val()
+							var code = set.child("code").val().toUpperCase()
 							var card = set.child("cards")
 							var newRand = Math.floor(Math.random() * card.numChildren());
 
 							card.forEach(function(aCards){
 								if(e == newRand){
 									var c = aCards.val()
-									var newCard = new aCard(c.name,sets,"0.99",c.imageName)
+									var newCard = new aCard(c.name,sets,code,"0.99",c.imageName)
 									cardStock.push(newCard);
 								}
 								e++
@@ -112,12 +120,14 @@
 		}
 
 		function displayTen(index){
-			console.log("Getting random")
-			if(cardStock[index]["name"].length > 18){
-				cardStock[index]["name"] = cardStock[index]["name"].slice(0,15)
+			$("#loader").remove()
+			var isName = cardStock[index]["name"]
+			if(cardStock[index]["name"].length > 15){
+				cardStock[index]["name"] = cardStock[index]["name"].slice(0,13)
 				cardStock[index]["name"] += "...";
 			}
-			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' src='http://mtgimage.com/setname/" + cardStock[index]["set"]  + "/" + cardStock[index]["image"] + ".jpg'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + cardStock[index]["name"] + "</span><span class='number-view pull-right'><i class='icon-white icon-dallor'></i>" + cardStock[index]["cost"] + "</span></p></div></li>")
+			cardStock[index]["code"]
+			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' src='http://mtgimage.com/set/" + cardStock[index]["code"]  + "/" + isName + ".jpg'></div><h5><a href='detail.html'>" + isName + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + cardStock[index]["name"] + "</span><span class='number-view pull-right'><i class='icon-white icon-usd'></i>" + cardStock[index]["cost"] + "</span></p></div></li>")
 		}
 
 		function logout(){
@@ -147,7 +157,7 @@
 	            			Decks
 	            			<b class="caret"></b>
             			</a>
-            			<ul class="dropdown-menu">
+            			<ul class="dropdown-menu" id="dropSlots">
 							<li>
 								<a href="profile.html">
 									<i class="icon-plus"></i>
@@ -184,260 +194,19 @@
 				<div class="row">
 					<div class="title span12">
 						<h3 class="pull-left">Random Cards</h3>
-						<div class="sort pull-right dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-								Most Viewed
-								<b class="caret"></b>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="#"><i class="icon-tag"></i>By Name</a></li>
-								<li><a href="#"><i class="icon-list"></i>List</a></li>
-								<li><a href="#"><i class="icon-eye-open"></i>View</a></li>
-							</ul>
-						</div>
 					</div><!-- end title -->
+				</div>
+				<div class="">
+					<p id="loader">Loading Cards...</p>
 				</div>
 				<ul id="cardShow" class="thumbnails thumbnails-horizontal">
 					
 				</ul>
 			</div><!-- end  -->
-			<!-- **************** start All Flie  ****************** -->
-			<div class="box-wrapper span10">
-				<div class="row">
-					<div class="title span10">
-						<h3 class="pull-left">Random Decks</h3>
-						<div class="sort pull-right dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-								Most Viewed
-								<b class="caret"></b>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="#"><i class="icon-tag"></i>By Name</a></li>
-								<li><a href="#"><i class="icon-list"></i>List</a></li>
-								<li><a href="#"><i class="icon-eye-open"></i>View</a></li>
-							</ul>
-						</div>
-					</div><!-- end title -->
-				</div>
-				<ul class="thumbnails thumbnails-vertical">
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj1.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj2.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj3.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj4.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj5.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj6.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-									
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj7.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit ... </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.
-									
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-
-					<li class="span5">
-						<div class="thumbnail border-radius-top">
-							<div class="bg-thumbnail-img">
-								<a class="overlay" href="detail.html">
-									<img src="assets/img/icons/play.png">
-								</a>
-								<img class="border-radius-top" src="assets/img/project/pj8.jpg">
-							</div>
-							<div class="thumbnail-content-left">
-								<h5><a href="detail.html">Lorem ipsum dolor sit amet, consectetur adipisicing </a></h5>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-								</p>
-							</div>
-						</div>
-						<div class="box border-radius-bottom">
-							<p>
-								<span class="title_torrent pull-left">Movie</span>
-								<span class="number-view pull-right"><i class="icon-white icon-eye-open"></i>1,444,898</span>
-							</p>
-						</div>
-					</li>
-				</ul>
-				<div class="row">
-					<div class="span10">
-						<div class="navigation pagination pull-right">
-							<ul>
-								<li><a href="#">←</a></li>
-								<li><a class="active" href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">→</a></li>
-							</ul>
-						</div>
-					</div><!-- end navigation -->
-				</div>
-			</div><!-- end  -->
-			<div class="row">
-				<div class="list-menu box-wrapper span2">
-					<div class="row">
-						<div class="title bg-title span2">
-							<h3>List menu</h3>
-						</div>
-					</div>
-					<ul class="nav nav-list">
-						<li><a href="index.html"><i class="icon-home"></i>Home</a></li>
-						<li class="active"><a href="#"><i class="icon-book"></i>Detail</a></li>
-						<li><a href="#"><i class="icon-list"></i>List Menu</a></li>
-						<li><a href="#"><i class="icon-list-alt"></i>List Alt Menu</a></li>
-					</ul>
-				</div>
-			</div><!-- row -->
-			<!-- **************** end All Flie  ****************** -->
 		</div><!-- row -->
 				
 	</div><!-- end container -->
 </div><!-- end main -->
-
 <div class="footer">
 	<div class="container">
 		<div class="row">
@@ -452,17 +221,17 @@
 			</div>
 			<div class="span2">
 				<ul class="nav nav-list">
-					<li class="nav-header">Contact</li>
-					<li><a href="#">Support</a></li>
-					<li><a href="#">About</a></li>
-					<li>84.903.197.895</li>
+					<li class="nav-header"></li>
+					<li><a href="#"></a></li>
+					<li><a href="#"></a></li>
+					<li></li>
 				</ul>
 			</div>
 			<div class="span2">
 				<ul class="nav nav-list">
-					<li class="nav-header">Blog</li>
-					<li><a href="#">Regulation</a></li>
-					<li><a href="#">Blog</a></li>
+					<li class="nav-header"></li>
+					<li><a href="#"></a></li>
+					<li><a href="#"></a></li>
 				</ul>
 			</div>
 			<div class="span2">
