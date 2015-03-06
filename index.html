@@ -98,62 +98,57 @@
 		}
 
 		function loadCardsFirst () {
-			var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards");
-			
-			cardRef.once("value",function(all){
-				for(var t = 0; t < 12;t++){
-					var i = 0;
-					var rand = Math.floor(Math.random() * all.numChildren());
-					all.forEach(function(set){
-						if(i == rand){
-							var e = 0
-							var sets = set.child("name").val()
-							var code = set.child("code").val()
-							var card = set.child("cards")
-							var newRand = Math.floor(Math.random() * card.numChildren());
+			var setRef = new Firebase("https://magictgdeckpricer.firebaseio.com/SetInfo");
+			for(var t = 0; t < 12;t++){
+				setRef.once("value",function(setName){
+					var rand = Math.floor(Math.random() * setName.numChildren());
+					var set = setName.child(rand).child("code").val();
+					var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards/" + set);
 
-							card.forEach(function(aCards){
-								if(e == newRand){
-									var c = aCards.val()
-									var newCard = new aCard(c.name,sets,code,"0.99",c.imageName)
-									cardStock.push(newCard);
-								}
-								e++
-							})
+					cardRef.once("value",function(all){
+						var newRand = Math.floor(Math.random() * all.numChildren());
+						var c = all.child("cards").child(newRand).val();
+						var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
+						cardStock.push(newCard);
+						if(cardStock.length == 12){
+							displayTen();
 						}
-						i++
 					})
-					displayTen(t)
-				}
-			})
+				})
+			}
 		}
 
-		function displayTen(index){
-			$("#loader").remove()
-			var setName = cardStock[index]["set"]
-			setName = setName.replace("Duel Decks: ","")
-			setName = setName.replace("Magic: The Gathering-","")
-			setName = setName.replace("Magic: The Gathering—Conspiracy","Conspiracy")
-			
-			setName = setName.replace("Duels of the ","")
-			setName = setName.replace("Core Set","")
-			setName = setName.replace("From the Vault: ","")
-			setName = setName.replace("Premium Deck Series: ","")
-			setName = setName.replace("Edition ","")
-			setName = setName.replace("Introductory","Intro.")
-			
-			cardStock[index]["image"] = cardStock[index]["image"].replace(/'/g, "\'"); 
-			var isName = cardStock[index]["image"]
+		function displayTen(){
+			var index = 0;
+			while (index < 12){
+				$("#loader").remove()
+				var setName = cardStock[index]["set"]
+				setName = setName.replace("Duel Decks: ","")
+				setName = setName.replace("Magic: The Gathering-","")
+				setName = setName.replace("Magic: The Gathering—Conspiracy","Conspiracy")
+				
+				setName = setName.replace("Duels of the ","")
+				setName = setName.replace("Core Set","")
+				setName = setName.replace("From the Vault: ","")
+				setName = setName.replace("Premium Deck Series: ","")
+				setName = setName.replace("Edition ","")
+				setName = setName.replace("Introductory","Intro.")
+				
+				cardStock[index]["image"] = cardStock[index]["image"].replace(/'/g, "\'"); 
+				var isName = cardStock[index]["image"]
 
-			cardStock[index]["code"]
-			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-plus ' style='cursor:pointer'></i></span></p></div></li>")
-			$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
-			$("#addToSideBoard" + index).bind("click",function(){
-				item = index;
-				console.log(item)
-				var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com");
-				ref.onAuth(checkAuth)
-			})
+				cardStock[index]["code"]
+				$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-plus ' style='cursor:pointer'></i></span></p></div></li>")
+				$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
+				$("#addToSideBoard" + index).bind("click",function(){
+					item = index;
+					console.log(item)
+					var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com");
+					ref.onAuth(checkAuth)
+				})
+				index++;
+			}
+			
 		}
 
 		function logout(){
