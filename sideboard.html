@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>detail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+	<link type="text/css" rel="stylesheet" href="assets/css/global.css" />
+	<link type="text/css" rel="stylesheet" href="assets/css/color-button.css" />
+	<!-- js Boots_from -->
+	<script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.2/firebase.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <script type="text/javascript">
+
+	    $(document).ready(function(){
+	    	var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/");
+	    		ref.onAuth(authHandaler)
+	    })
+
+	    function authHandaler(authData,error) {
+	  		if (authData) {
+				var newRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users");
+				var name = authData.password.email;
+				newRef.orderByChild("email").equalTo(name).limitToFirst(1).on("value",function(data){
+					data.forEach(function(child){
+						$("#userPic").remove();
+						$("#userDrop").remove();
+						$("#sideboardCount").remove();
+						var userData = child.val()
+						var side = child.child("sideboard").numChildren()
+						$("#loginArea").remove()
+						$(".nav.pull-right").append("<li id='userPic' class='avatar_small'><a href='account.html'></a></li>")
+						$(".nav.pull-right").append("<li id='userDrop'class='dropdown'><a class='dropdown-toggle' href='#' data-toggle='dropdown' id='usernameSlot'>" + userData["username"] + "<b class='caret'></b></a><ul class='dropdown-menu'><li><a href='profile.html'><i class='icon-user'></i>Account Setting  </a></li><li><a href='setting.html'><i class='icon-lock'></i> Change Password</a></li><li class='divider'></li><li><a id='logoutUser'><i class='icon-off'></i> Logout</a></li></ul></li>")
+						$("<li id='sideboardCount'><a href='sideboard.html'>Sideboard: " + side + "</a></li>").insertBefore("#lib")
+						$("#logoutUser").bind("click",logout)
+						var decks = child.child("Decks");
+						decks.forEach(function(deck){
+							$("#dropSlots").append("<li><a>" + deck.val().name + "</a></li>")
+						})
+						loadSideboard(authData.password.email)
+					})
+					
+				})
+				
+	  		} else {
+  				console.log(error)
+  				window.location.replace("index.html");
+	  		}
+		}
+
+		function loadSideboard(name){
+			var newRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users");
+				newRef.orderByChild("email").equalTo(name).limitToFirst(1).on("value",function(data){
+					data.forEach(function(child){
+						var userData = child.val()
+						var side = child.child("sideboard")
+						var index = 0;
+						side.forEach(function(aChild){
+							var item = aChild.val();
+							$("#sideCards").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + item.name + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + item.set + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-minus ' alt='Remove' style='cursor:pointer'></i></span></p></div></li>")
+							$("#cardImage" + index).attr("src","assets/img/AllSets/" + item.code  + "/" + item.name.toLowerCase() + ".jpg")
+							index++
+						})
+					})
+					
+				})
+		}
+
+		function logout(){
+			ref.unauth()
+			ref.onAuth(authHandaler)
+			window.location.replace("index.html");
+		}
+    
+    </script>
+	<!-- end Boots_from -->
+</head>
+
+<body data-spy="scroll" data-target=".subnav" data-offset="50" data-twttr-rendered="true">
+
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="#">
+				<span>MTG</span><span class="cl-blue">Deck Pricer</span>
+			</a>
+			<div class="nav-collapse">
+				<ul class="nav pull-right">
+              		<li><a href="index.html">Home</a></li>
+              		<li class="dropdown">
+            			<a class="dropdown-toggle" href="#" data-toggle="dropdown">
+	            			Decks
+	            			<b class="caret"></b>
+            			</a>
+            			<ul class="dropdown-menu" id="dropSlots">
+							<li>
+								<a href="profile.html">
+									<i class="icon-plus"></i>
+									New Deck  </a>
+							</li>
+						</ul>
+            		</li>
+              		<li id="lib"><a href="element.html">Library</a></li>
+              		<li class="divider-vertical"></li>
+              		<li id="loginArea"><a href="login.html">Login</a></li>
+            	</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end navbar -->
+<div class="main">
+	<div class="container">
+		<div class="row">
+			<div class="box-wrapper span9">
+				<div class="row">
+					<div class="box-content-widget span9">
+						<div class="row">
+							<div class="title bg-title span9">
+								<h3>Sideboard</h3>
+							</div>
+						</div>
+						<div class="widget">
+							<div  class="widget-content-pd">
+								<ul id="sideCards" class="thumbnails thumbnails-horizontal">
+								</ul>
+							</div>
+						</div><!-- widget -->
+					</div><!-- box-content-widget -->
+				</div><!-- row -->
+			</div><!-- end body-content -->
+			
+			<div class="sidebar-content span3">
+				<div class="row">
+					<div class="box-wrapper span3">
+						<div class="row">
+							<div class="title bg-title span3">
+								<h3>Random Cards</h3>
+							</div>
+						</div>
+						<ul class="thumbnails thumbnails-horizontal">
+						</ul>
+					</div><!-- end thumbnails-style1 -->
+				</div><!-- row -->
+
+			</div><!-- end sidebar-content -->
+		</div><!-- row -->
+	</div><!-- end container -->
+</div><!-- end main -->
+
+<div class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="span6 logo-vt">
+				<a class="brand" href="#">
+					<span>Choose</span><span class="cl-blue">Logo</span>
+				</a>
+				<span class="coppy_right">
+					<p>Lorem ipsum dolor sit </p>
+					<p>@2012 All Rights Reserved.</p>
+				</span>
+			</div>
+			<div class="span2">
+				<ul class="nav nav-list">
+					<li class="nav-header">Contact</li>
+					<li><a href="#">Support</a></li>
+					<li><a href="#">About</a></li>
+					<li>84.903.197.895</li>
+				</ul>
+			</div>
+			<div class="span2">
+				<ul class="nav nav-list">
+					<li class="nav-header">Blog</li>
+					<li><a href="#">Regulation</a></li>
+					<li><a href="#">Blog</a></li>
+				</ul>
+			</div>
+			<div class="span2">
+				<ul class="nav nav-list">
+					<li class="nav-header">Follow Us</li>
+					<li><a href="#"><i class="twitter"></i>Twitter</a></li>
+					<li><a href="#"><i class="facebook"></i>Facebook</a></li>
+					<li><a href="#"><i class="dd"></i>Forum</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end footer -->
+<script type="text/javascript">
+
+</script>
+</body>
+</html>
+
