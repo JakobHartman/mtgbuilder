@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>detail</title>
+	<title>MTG Deck Pricer: Sideboard</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
 	<link type="text/css" rel="stylesheet" href="assets/css/global.css" />
@@ -35,6 +35,8 @@
 						$("<li id='sideboardCount'><a href='sideboard.html'>Sideboard: " + side + "</a></li>").insertBefore("#lib")
 						$("#logoutUser").bind("click",logout)
 						var decks = child.child("Decks");
+						$("#dropSlots").html("")
+						$("#dropSlots").append("<li><a href='decks.html'><i class='icon-plus'></i> New Deck</a></li>")
 						decks.forEach(function(deck){
 							$("#dropSlots").append("<li><a>" + deck.val().name + "</a></li>")
 						})
@@ -71,7 +73,7 @@
 							sets = sets.replace("Introductory","Intro.")
 
 							$("#sideCards").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + item.name + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + sets + "</span><span class='number-view pull-right'><i id='RemoveFromSideboard" + index + "' class='icon-white icon-minus ' alt='Remove' style='cursor:pointer'></i></span></p></div></li>")
-							$("#cardImage" + index).attr("src","assets/img/AllSets/" + item.code  + "/" + item.name.toLowerCase() + ".jpg")
+							$("#cardImage" + index).attr("src","assets/img/AllSets/" + item.code  + "/" + item.image + ".jpg")
 							$("#RemoveFromSideboard" + index).bind("click",function(){
 								console.log(item.uuid)
 								var aRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users/" + child.key() + "/sideboard/" + item.uuid).remove();

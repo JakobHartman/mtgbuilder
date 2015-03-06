@@ -614,6 +614,7 @@ border-bottom-color: #999;
 	padding:10px;
 }
 .widget-content-pd{
+	min-height: 325px;
 	padding:20px 90px;
 }
 .widget-content .well,.widget-content-pd .well {

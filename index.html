@@ -48,9 +48,11 @@
 						$("<li id='sideboardCount'><a href='sideboard.html'>Sideboard: " + side + "</a></li>").insertBefore("#lib")
 						$("#logoutUser").bind("click",logout)
 						var decks = child.child("Decks");
-							decks.forEach(function(deck){
-								$("#dropSlots").append("<li><a>" + deck.val().name + "</a></li>")
-							})
+						$("#dropSlots").html("")
+						$("#dropSlots").append("<li><a href='decks.html'><i class='icon-plus'></i> New Deck</a></li>")
+						decks.forEach(function(deck){
+							$("#dropSlots").append("<li><a>" + deck.val().name + "</a></li>")
+						})
 					})
 					
 				})
@@ -106,8 +108,9 @@
 					var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards/" + set);
 
 					cardRef.once("value",function(all){
-						var newRand = Math.floor(Math.random() * all.numChildren());
+						var newRand = Math.floor(Math.random() * all.numChildren()) + 1;
 						var c = all.child("cards").child(newRand).val();
+						console.log(c.name);
 						var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
 						cardStock.push(newCard);
 						if(cardStock.length == 12){
@@ -120,7 +123,7 @@
 
 		function displayTen(){
 			var index = 0;
-			while (index < 12){
+			for(index;index < 12;index++){
 				$("#loader").remove()
 				var setName = cardStock[index]["set"]
 				setName = setName.replace("Duel Decks: ","")
@@ -141,12 +144,11 @@
 				$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-plus ' style='cursor:pointer'></i></span></p></div></li>")
 				$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
 				$("#addToSideBoard" + index).bind("click",function(){
-					item = index;
+					item = $(this).attr("id").replace("addToSideBoard","") * 1;
 					console.log(item)
 					var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com");
 					ref.onAuth(checkAuth)
 				})
-				index++;
 			}
 			
 		}
@@ -180,7 +182,7 @@
             			</a>
             			<ul class="dropdown-menu" id="dropSlots">
 							<li>
-								<a href="profile.html">
+								<a href="decks.html">
 									<i class="icon-plus"></i>
 									New Deck  </a>
 							</li>
