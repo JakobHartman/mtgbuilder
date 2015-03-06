@@ -15,6 +15,7 @@
     	var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/");
     	var cardStock = new Array();
     	var showStock = new Array();
+    	var item;
 	    $(document).ready(function(){
 	    	ref.onAuth(authHandaler)
 	    	loadCardsFirst()
@@ -38,11 +39,13 @@
 					data.forEach(function(child){
 						$("#userPic").remove();
 						$("#userDrop").remove();
+						$("#sideboardCount").remove();
 						var userData = child.val()
-						console.log(userData)
+						var side = child.child("sideboard").numChildren()
 						$("#loginArea").remove()
 						$(".nav.pull-right").append("<li id='userPic' class='avatar_small'><a href='account.html'></a></li>")
 						$(".nav.pull-right").append("<li id='userDrop'class='dropdown'><a class='dropdown-toggle' href='#' data-toggle='dropdown' id='usernameSlot'>" + userData["username"] + "<b class='caret'></b></a><ul class='dropdown-menu'><li><a href='profile.html'><i class='icon-user'></i>Account Setting  </a></li><li><a href='setting.html'><i class='icon-lock'></i> Change Password</a></li><li class='divider'></li><li><a id='logoutUser'><i class='icon-off'></i> Logout</a></li></ul></li>")
+						$("<li id='sideboardCount'><a href='sideboard.html'>Sideboard: " + side + "</a></li>").insertBefore("#lib")
 						$("#logoutUser").bind("click",logout)
 						var decks = child.child("Decks");
 							decks.forEach(function(deck){
@@ -56,6 +59,44 @@
 	  				console.log(error)
 	  		}
 		}
+
+		function checkAuth(authData,error){
+			if(authData){
+				var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users");
+				var name = authData.password.email;
+				console.log(name)
+				ref.orderByChild("email").equalTo(name).limitToFirst(1).once("value",function(data){
+					data.forEach(function(child){
+						var max = child.child("maxSide").val()
+						var key = child.key();
+						var theName = cardStock[item].name;
+						var set = cardStock[item].set
+						var code = cardStock[item].code
+						var image = cardStock[item].image
+						console.log(theName)
+						var aRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users/" + key + "/sideboard");
+							aRef.once("value",function(data){
+								var number = data.numChildren();
+								if(number >= max){
+									$('.error').text("Sideboard full")
+									$('.error').fadeIn(400).delay(3000).fadeOut(400);
+								}else{
+									var i = aRef.push();
+										i.set({"name" : theName ,"owned" : "false" ,"set" : set,"code":code,"image" : image,"uuid":i.name()})
+									$('.error').text(theName + " added to side board")
+									$('.error').fadeIn(400).delay(3000).fadeOut(400);
+								}
+							})
+						
+
+					})
+				})
+			} else{
+				$('.error').text("Need to login in order to add to sideboard")
+				$('.error').fadeIn(400).delay(3000).fadeOut(400);
+			}
+		}
+
 		function loadCardsFirst () {
 			var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards");
 			
@@ -84,50 +125,35 @@
 					})
 					displayTen(t)
 				}
-				Firebase.goOffline()
-			})
-		}
-
-		function loadCards () {
-			var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards");
-			$("#cardShow").html("")
-			cardRef.once("value",function(all){
-				for(var t = 0; t < 12;t++){
-					var i = 0;
-					var rand = Math.floor(Math.random() * all.numChildren());
-					all.forEach(function(set){
-						if(i == rand){
-							var e = 0
-							var sets = set.child("name").val()
-							var code = set.child("code").val().toUpperCase()
-							var card = set.child("cards")
-							var newRand = Math.floor(Math.random() * card.numChildren());
-
-							card.forEach(function(aCards){
-								if(e == newRand){
-									var c = aCards.val()
-									var newCard = new aCard(c.name,sets,code,"0.99",c.imageName)
-									cardStock.push(newCard);
-								}
-								e++
-							})
-						}
-						i++
-					})
-					displayTen(t)
-				}
 			})
 		}
 
 		function displayTen(index){
 			$("#loader").remove()
-			var isName = cardStock[index]["name"]
-			if(cardStock[index]["name"].length > 15){
-				cardStock[index]["name"] = cardStock[index]["name"].slice(0,13)
-				cardStock[index]["name"] += "...";
-			}
+			var setName = cardStock[index]["set"]
+			setName = setName.replace("Duel Decks: ","")
+			setName = setName.replace("Magic: The Gathering-","")
+			setName = setName.replace("Magic: The Gathering—Conspiracy","Conspiracy")
+			
+			setName = setName.replace("Duels of the ","")
+			setName = setName.replace("Core Set","")
+			setName = setName.replace("From the Vault: ","")
+			setName = setName.replace("Premium Deck Series: ","")
+			setName = setName.replace("Edition ","")
+			setName = setName.replace("Introductory","Intro.")
+			
+			cardStock[index]["image"] = cardStock[index]["image"].replace(/'/g, "\'"); 
+			var isName = cardStock[index]["image"]
+
 			cardStock[index]["code"]
-			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' src='http://mtgimage.com/set/" + cardStock[index]["code"]  + "/" + isName + ".jpg'></div><h5><a href='detail.html'>" + isName + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + cardStock[index]["name"] + "</span><span class='number-view pull-right'><i class='icon-white icon-plus ' style='cursor:pointer'></i></span><span class='number-view pull-right'><i class='icon-white icon-usd text-center'></i>" + cardStock[index]["cost"] + "</span></p></div></li>")
+			$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-plus ' style='cursor:pointer'></i></span></p></div></li>")
+			$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
+			$("#addToSideBoard" + index).bind("click",function(){
+				item = index;
+				console.log(item)
+				var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com");
+				ref.onAuth(checkAuth)
+			})
 		}
 
 		function logout(){
@@ -147,7 +173,7 @@
 	<div class="navbar-inner">
 		<div class="container">
 			<a class="brand" href="#">
-				<span>MTG</span><span class="cl-blue">Deck Builder</span>
+				<span>MTG</span><span class="cl-blue">Deck Pricer</span>
 			</a>
 			<div class="nav-collapse">
 				<ul class="nav pull-right">
@@ -165,7 +191,7 @@
 							</li>
 						</ul>
             		</li>
-              		<li><a href="element.html">Library</a></li>
+              		<li id="lib"><a href="element.html">Library</a></li>
               		<li class="divider-vertical"></li>
               		<li id="loginArea"><a href="login.html">Login</a></li>
             	</ul>
@@ -181,7 +207,7 @@
 				<div class="widget">
 					<div class="wrapper-search">
 						<form class="form-inline form-search border-rd4">
-							<input placeholder="Type somethings to search .." type="text" class="box-text">
+							<input placeholder="Search Cards" type="text" class="box-text">
 							<a href="#"class="btn-search"></a>
 						</form>
 					</div>
@@ -194,6 +220,7 @@
 				<div class="row">
 					<div class="title span12">
 						<h3 class="pull-left">Random Cards</h3>
+						<div class='error' style='display:none'>Event Created</div>
 					</div><!-- end title -->
 				</div>
 				<div class="">

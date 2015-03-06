@@ -56,10 +56,26 @@
 						var userData = child.val()
 						var side = child.child("sideboard")
 						var index = 0;
+						$("#sideCards").html("")
 						side.forEach(function(aChild){
 							var item = aChild.val();
-							$("#sideCards").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + item.name + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + item.set + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-minus ' alt='Remove' style='cursor:pointer'></i></span></p></div></li>")
+							var sets = item.set
+							sets = sets.replace("Duel Decks: ","")
+							sets = sets.replace("Magic: The Gathering-","")
+							sets = sets.replace("Magic: The Gathering—Conspiracy","Conspiracy")
+							sets = sets.replace("Duels of the ","")
+							sets = sets.replace("Core Set","")
+							sets = sets.replace("From the Vault: ","")
+							sets = sets.replace("Premium Deck Series: ","")
+							sets = sets.replace("Edition ","")
+							sets = sets.replace("Introductory","Intro.")
+
+							$("#sideCards").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + item.name + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + sets + "</span><span class='number-view pull-right'><i id='RemoveFromSideboard" + index + "' class='icon-white icon-minus ' alt='Remove' style='cursor:pointer'></i></span></p></div></li>")
 							$("#cardImage" + index).attr("src","assets/img/AllSets/" + item.code  + "/" + item.name.toLowerCase() + ".jpg")
+							$("#RemoveFromSideboard" + index).bind("click",function(){
+								console.log(item.uuid)
+								var aRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users/" + child.key() + "/sideboard/" + item.uuid).remove();
+							})
 							index++
 						})
 					})
