@@ -116,9 +116,13 @@
 					cardRef.once("value",function(all){
 						var newRand = Math.floor(Math.random() * all.numChildren());
 						var c = all.child("cards").child(newRand).val();
-						console.log(c);
-						var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
-						cardStock.push(newCard);
+						console.log(cardStock.length);
+						if(c != null){
+							var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
+							cardStock.push(newCard);
+						}else{
+							t--
+						}
 						if(cardStock.length == 12){
 							displayTen();
 						}
