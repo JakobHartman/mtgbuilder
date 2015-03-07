@@ -20,8 +20,14 @@
 	    $(document).ready(function(){
 	    	ref.onAuth(authHandaler)
 	    	loadCardsFirst()
-
+	    	$(".refresh").bind("click",refresh)
 	    })
+
+	    function refresh(){
+	    	cardStock = new Array();
+	    	$("#cardShow").html("")
+	    	loadCardsFirst()
+	    }
 
 	    function aCard(name,set,code,cost,image){
 	   		this.name = name;
@@ -87,12 +93,10 @@
 								}else{
 									var i = aRef.push();
 										i.set({"name" : theName ,"owned" : "false" ,"set" : set,"code":code,"image" : image,"uuid":i.name()})
-									$('.error').text(theName + " added to side board")
+									$('.error').text(theName + " added to sideboard")
 									$('.error').fadeIn(400).delay(3000).fadeOut(400);
 								}
 							})
-						
-
 					})
 				})
 			} else{
@@ -110,7 +114,7 @@
 					var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards/" + set);
 
 					cardRef.once("value",function(all){
-						var newRand = Math.floor(Math.random() * all.numChildren()) + 1;
+						var newRand = Math.floor(Math.random() * all.numChildren());
 						var c = all.child("cards").child(newRand).val();
 						console.log(c);
 						var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
@@ -238,7 +242,7 @@
 				
 				<div class="row">
 					<div class="title span12">
-						<h3 class="pull-left">Random Cards</h3>
+						<h3 class="pull-left">Random Cards <img src="assets/img/icons/Refresh_icon.png" class="refresh"></h3>
 						<div class='error' style='display:none'>Event Created</div>
 					</div><!-- end title -->
 				</div>

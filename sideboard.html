@@ -16,6 +16,7 @@
 	    $(document).ready(function(){
 	    	var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/");
 	    		ref.onAuth(authHandaler)
+	    	
 	    })
 
 	    function authHandaler(authData,error) {
