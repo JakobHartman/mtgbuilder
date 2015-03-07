@@ -33,6 +33,7 @@
 
         function authHandaler(authData,error) {
 	  		if (authData) {
+	  			console.log(authData);
 				var newRef = new Firebase("https://mtgdeckpricerweb.firebaseio.com/Users");
 				var name = authData.password.email;
 				newRef.orderByChild("email").equalTo(name).limitToFirst(1).on("value",function(data){
@@ -110,7 +111,7 @@
 					cardRef.once("value",function(all){
 						var newRand = Math.floor(Math.random() * all.numChildren()) + 1;
 						var c = all.child("cards").child(newRand).val();
-						console.log(c.name);
+						console.log(c);
 						var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
 						cardStock.push(newCard);
 						if(cardStock.length == 12){
