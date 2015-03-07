@@ -1,0 +1,22 @@
+{
+  "name": "mtgbuilder",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jakobhartman/mtgbuilder",
+  "authors": [
+    "Jakob Hartman <jakobhartman11@gmail.com>"
+  ],
+  "description": "An app for planning, pricing, and buying MTG decks",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "~1.3.14",
+    "angular": "~1.3.14"
+  }
+}
