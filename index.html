@@ -15,6 +15,7 @@
     	var ref = new Firebase("https://mtgdeckpricerweb.firebaseio.com/");
     	var cardStock = new Array();
     	var showStock = new Array();
+    	var decks = null;
     	var item;
 	    $(document).ready(function(){
 	    	ref.onAuth(authHandaler)
@@ -48,7 +49,7 @@
 						$(".nav.pull-right").append("<li id='userDrop'class='dropdown'><a class='dropdown-toggle' href='#' data-toggle='dropdown' id='usernameSlot'>" + userData["username"] + "<b class='caret'></b></a><ul class='dropdown-menu'><li><a href='profile.html'><i class='icon-user'></i>Account Setting  </a></li><li><a href='setting.html'><i class='icon-lock'></i> Change Password</a></li><li class='divider'></li><li><a id='logoutUser'><i class='icon-off'></i> Logout</a></li></ul></li>")
 						$("<li id='sideboardCount'><a href='sideboard.html'>Sideboard: " + side + "</a></li>").insertBefore("#lib")
 						$("#logoutUser").bind("click",logout)
-						var decks = child.child("Decks");
+						decks = child.child("Decks");
 						$("#dropSlots").html("")
 						$("#dropSlots").append("<li><a href='decks.html'><i class='icon-plus'></i> New Deck</a></li>")
 						decks.forEach(function(deck){
@@ -141,9 +142,29 @@
 				cardStock[index]["image"] = cardStock[index]["image"].replace(/'/g, "\'"); 
 				var isName = cardStock[index]["image"]
 
-				cardStock[index]["code"]
-				$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><a class='overlay' href='detail.html'><img src='assets/img/icons/play.png'></a><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + " </a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span class='number-view pull-right'><i id='addToSideBoard" + index + "' class='icon-white icon-plus ' style='cursor:pointer'></i></span></p></div></li>")
+
+				$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + "</a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span><ul><li class='number-view pull-right dropdown'><a class='icon-white icon-plus dropdown-toggle-2' data-toggle='dropdown' style='cursor:pointer'></a><ul class='dropdown-menu' id='dropSlotsCard" + index + "'><li><a id='addToSideBoard" + index + "'>Add to sideboard</a><li class='divider'></li></li></ul></li></ul></span></p></div></li>")
 				$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
+				var i = 0;
+				decks.forEach(function(child){
+					$("#dropSlotsCard" + index).append("<li id='deck" + index + "" + i + "'><a>" + child.child("name").val() + "</a></li>")
+					$("#deck" + index + "" + i).bind("click",function(){
+
+						var url = child.ref().toString();
+						console.log(url)
+						var thing = $(this).attr("id").replace("deck","");
+						thing = thing.substring(0, thing.length - 1) * 1;
+						var base = new Firebase(url)
+						var s = base.child("cards").push();
+						var code = cardStock[thing]["code"];
+						var theName = cardStock[thing]["name"];
+						s.set({"name" : theName ,"owned" : false ,"set" : setName,"code":code,"image" : isName,"uuid":s.name()})
+						$('.error').text(theName + " added to " + child.child("name").val())
+						$('.error').fadeIn(400).delay(3000).fadeOut(400);
+					})
+					i++;
+				})
+				
 				$("#addToSideBoard" + index).bind("click",function(){
 					item = $(this).attr("id").replace("addToSideBoard","") * 1;
 					console.log(item)
