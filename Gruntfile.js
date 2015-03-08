@@ -4,17 +4,23 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		serve: {
 			options: {
-				'serve': {
-					'path': './build'
+				serve: {
+					path: './build'
 				}
 			}
 		},
 		jade: {
 			compile: {
-				pretty: true,
-				files: {
-					'build/index.html': 'app/index.jade'
-				}
+				options: {
+					pretty: true
+				},
+				files: [{
+					expand: true,
+					cwd: 'app',
+					src: [ '**/*.jade'  ],
+					dest: 'build',
+					ext: '.html'
+				}]
 			}
 		}
 	});
