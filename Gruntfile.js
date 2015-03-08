@@ -5,7 +5,15 @@ module.exports = function(grunt) {
 		serve: {
 			options: {
 				'serve': {
-					'path': './app'
+					'path': './build'
+				}
+			}
+		},
+		jade: {
+			compile: {
+				pretty: true,
+				files: {
+					'build/index.html': 'app/index.jade'
 				}
 			}
 		}
@@ -13,9 +21,9 @@ module.exports = function(grunt) {
 
 	// Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks('grunt-serve');
+	grunt.loadNpmTasks('grunt-contrib-jade');
 
 	// Default task(s).
-	grunt.registerTask('default', ['uglify']);
-
+	grunt.registerTask('default', ['grunt-serve']);
 
 };
