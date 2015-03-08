@@ -2,6 +2,50 @@ doctype html
 html
 	head
 		title MTG Deck Builder
-	body
+		link(rel="stylesheet", type="text/css", href="assets/css/bootstrap.min.css")
+		link(type="text/css", rel="stylesheet", href="assets/css/global.css")
+		link(type="text/css", rel="stylesheet", href="assets/css/color-button.css")
+	body(data-spy="scroll", data-target=".subnav", data-offset="50", data-twttr-rendered="true")
 		h1.
 			Hello World!
+		.navbar.navbar-fixed-top
+			.navbar-inner
+				.container
+					a.brand(href="#")
+					.nav-collapse
+						ul.nav.pull-right
+							li.dropdown
+								a.dropdown-toggle(href="#", data-toggle="dropdown")
+									Decks
+								ul.dropdown-menu#dropSlots
+									li
+										a(href="decks.html")
+		.main
+			.container
+				.row
+					.box-wrapper.span12
+						.widget
+							.wrapper-search
+								form.form-inline.form-search.border-rd4
+									input.box-text(placeholder="Search Cards" type="text")
+				.row
+					.box-wrapper.span12
+						
+						.row
+							.title.span12
+						div
+							ul#cardShow.thumbnails.thumbnails-horizontal
+							
+						
+		.footer
+			.container
+				.row
+					.span6.logo-vt
+						a.brand( href="#")
+						span class="coppy_right"
+					.span2
+						ul.nav nav-list
+					.span2
+						ul.nav nav-list
+					.span2
+						ul.nav nav-list

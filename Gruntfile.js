@@ -17,10 +17,17 @@ module.exports = function(grunt) {
 				files: [{
 					expand: true,
 					cwd: 'app',
-					src: [ '**/*.jade'  ],
+					src: [ '**/*.jade' ],
 					dest: 'build',
 					ext: '.html'
 				}]
+			}
+		},
+		copy: {
+			build: {
+				files: [
+					{expand: true, cwd: 'app/', src: ['**'], dest: 'build/'}
+				]
 			}
 		}
 	});
@@ -28,6 +35,7 @@ module.exports = function(grunt) {
 	// Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks('grunt-serve');
 	grunt.loadNpmTasks('grunt-contrib-jade');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	// Default task(s).
 	grunt.registerTask('default', ['grunt-serve']);
