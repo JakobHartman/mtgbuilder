@@ -1,0 +1,26 @@
+{
+  "name": "mtgbuilder",
+  "version": "1.0.0",
+  "description": "An app to plan, price, and buy an MTG deck",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jakobhartman/mtgbuilder"
+  },
+  "author": "Jakob Hartman <jakobhartman11@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jakobhartman/mtgbuilder/issues"
+  },
+  "homepage": "https://github.com/jakobhartman/mtgbuilder",
+  "dependencies": {
+    "bower": "^1.3.12"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-serve": "^0.1.6"
+  }
+}

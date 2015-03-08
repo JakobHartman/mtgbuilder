@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "homepage": "https://github.com/jakobhartman/mtgbuilder",
   "authors": [
-    "Jakob Hartman <jakobhartman11@gmail.com>"
+    "Jakob Hartman <jakobhartman11@gmail.com>",
+	"Cody Poll <cjpoll@gmail.com>"
   ],
   "description": "An app for planning, pricing, and buying MTG decks",
   "license": "MIT",
