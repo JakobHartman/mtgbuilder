@@ -4,3 +4,4 @@ dist
 .sass-cache
 assets/img/AllSets/
 bower_components
+build
