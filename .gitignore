@@ -3,5 +3,5 @@ dist
 .tmp
 .sass-cache
 assets/img/AllSets/
-bower_components
+app/bower_components
 build

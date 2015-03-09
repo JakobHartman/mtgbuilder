@@ -26,8 +26,24 @@ module.exports = function(grunt) {
 		copy: {
 			build: {
 				files: [
-					{expand: true, cwd: 'app/', src: ['**'], dest: 'build/'}
+					{expand: true, cwd: 'app/assets', src: ['**'], dest: 'build/assets'},
+					{expand: true, cwd: 'app/bower_components', src: ['**'], dest: 'build/bower_components'}
 				]
+			}
+		},
+		clean: ["build"],
+		coffee: {
+			build: {
+				options: {
+					join: true
+				},
+				files: {
+					'build/javascripts/application.js': [
+						'app/main.coffee',
+						'app/controllers/*.coffee',
+						'app/services/*.coffee'
+					]
+				}
 			}
 		}
 	});
@@ -35,9 +51,16 @@ module.exports = function(grunt) {
 	// Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks('grunt-serve');
 	grunt.loadNpmTasks('grunt-contrib-jade');
+	grunt.loadNpmTasks('grunt-contrib-coffee');
 	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-contrib-clean');
 
 	// Default task(s).
-	grunt.registerTask('default', ['grunt-serve']);
+	grunt.registerTask('default', [
+		'clean',
+		'jade:compile',
+		'coffee:build',
+		'copy:build'
+	]);
 
 };

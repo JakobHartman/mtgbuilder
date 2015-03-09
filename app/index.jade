@@ -1,10 +1,17 @@
 doctype html
-html
+html(data-ng-app="mtgbuilder")
 	head
 		title MTG Deck Builder
 		link(rel="stylesheet", type="text/css", href="assets/css/bootstrap.min.css")
 		link(type="text/css", rel="stylesheet", href="assets/css/global.css")
 		link(type="text/css", rel="stylesheet", href="assets/css/color-button.css")
+		script(src="assets/js/jquery.js")
+		script(src="assets/js/bootstrap.min.js")
+		script(src="https://cdn.firebase.com/js/client/2.2.2/firebase.js")
+		script(src="assets/js/custom.js")
+		script(src="bower_components/angular/angular.js")
+		script(src="bower_components/angular-route/angular-route.js")
+		script(src="javascripts/application.js")
 	body(data-spy="scroll", data-target=".subnav", data-offset="50", data-twttr-rendered="true")
 		h1.
 			Hello World!
@@ -22,30 +29,16 @@ html
 										a(href="decks.html")
 		.main
 			.container
-				.row
-					.box-wrapper.span12
-						.widget
-							.wrapper-search
-								form.form-inline.form-search.border-rd4
-									input.box-text(placeholder="Search Cards" type="text")
-				.row
-					.box-wrapper.span12
-						
-						.row
-							.title.span12
-						div
-							ul#cardShow.thumbnails.thumbnails-horizontal
-							
-						
+				div(data-ng-view="")
 		.footer
 			.container
 				.row
 					.span6.logo-vt
 						a.brand( href="#")
-						span class="coppy_right"
+						span(class="copy_right")
 					.span2
-						ul.nav nav-list
+						ul.nav.nav-list
 					.span2
-						ul.nav nav-list
+						ul.nav.nav-list
 					.span2
-						ul.nav nav-list
+						ul.nav.nav-list
