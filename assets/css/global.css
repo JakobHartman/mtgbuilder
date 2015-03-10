@@ -990,6 +990,20 @@ code {
 	cursor: pointer;
 }
 
+.bigCard{
+	cursor: pointer;
+	z-index: 1000;
+	width: 300px;
+	height: 600px;
+	position:fixed;
+	left:40%;
+	bottom:40px;
+}
+
+.bg-thumbnail-img img{
+	cursor: pointer;
+}
+
 
 
 

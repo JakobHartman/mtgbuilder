@@ -116,12 +116,11 @@
 					cardRef.once("value",function(all){
 						var newRand = Math.floor(Math.random() * all.numChildren());
 						var c = all.child("cards").child(newRand).val();
-						console.log(cardStock.length);
 						if(c != null){
 							var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
 							cardStock.push(newCard);
 						}else{
-							t--
+							t -= 2;
 						}
 						if(cardStock.length == 12){
 							displayTen();
@@ -152,6 +151,16 @@
 
 
 				$("#cardShow").append("<li class='span3'><div class='thumbnail border-radius-top'><div class='bg-thumbnail-img'><img class='border-radius-top' id='cardImage" + index + "'></div><h5><a href='detail.html'>" + cardStock[index]["name"] + "</a></h5></div><div class='box border-radius-bottom'><p><span class='title_torrent pull-left'>" + setName + "</span><span><ul><li class='number-view pull-right dropdown'><a class='icon-white icon-plus dropdown-toggle-2' data-toggle='dropdown' style='cursor:pointer'></a><ul class='dropdown-menu' id='dropSlotsCard" + index + "'><li><a id='addToSideBoard" + index + "'>Add to sideboard</a><li class='divider'></li></li></ul></li></ul></span></p></div></li>")
+				$("#cardImage" + index).bind("click",function(){
+					var p = $(this).attr("id").replace("cardImage","") * 1;
+					console.log(p)
+					var car = cardStock[p]
+					$("#showBigCard").attr("src","assets/img/AllSets/" + car["code"]  + "/" + car["image"] + ".jpg")
+					$(".bigCard").fadeIn(400);
+					$(".bigCard").bind("click",function(){
+						$(".bigCard").fadeOut(400);
+					})
+				})
 				$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
 				var i = 0;
 				decks.forEach(function(child){
@@ -247,6 +256,7 @@
 				<div class="row">
 					<div class="title span12">
 						<h3 class="pull-left">Random Cards <img src="assets/img/icons/Refresh_icon.png" class="refresh"></h3>
+						<div class="bigCard" style="display:none"><img id="showBigCard"/></div>
 						<div class='error' style='display:none'>Event Created</div>
 					</div><!-- end title -->
 				</div>
