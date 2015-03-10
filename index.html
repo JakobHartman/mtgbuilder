@@ -106,21 +106,25 @@
 		}
 
 		function loadCardsFirst () {
+			var t = 0
 			var setRef = new Firebase("https://magictgdeckpricer.firebaseio.com/SetInfo");
-			for(var t = 0; t < 12;t++){
+			for(t; t < 12;t++){
 				setRef.once("value",function(setName){
 					var rand = Math.floor(Math.random() * setName.numChildren());
+					console.log( "Number of sets: " + setName.numChildren())
 					var set = setName.child(rand).child("code").val();
 					var cardRef = new Firebase("https://magictgdeckpricer.firebaseio.com/Cards/" + set);
 
 					cardRef.once("value",function(all){
-						var newRand = Math.floor(Math.random() * all.numChildren());
+						var newRand = Math.floor(Math.random() * all.child("cards").numChildren());
+						console.log("Number of cards in set: " + all.child("cards").numChildren())
+						console.log(rand,newRand)
 						var c = all.child("cards").child(newRand).val();
 						if(c != null){
 							var newCard = new aCard(c.name,all.child("name").val(),set,"0.99",c.imageName)
 							cardStock.push(newCard);
 						}else{
-							t -= 2;
+							t--;
 						}
 						if(cardStock.length == 12){
 							displayTen();
