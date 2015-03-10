@@ -21,7 +21,26 @@
 	    	ref.onAuth(authHandaler)
 	    	loadCardsFirst()
 	    	$(".refresh").bind("click",refresh)
+	    	
+	    	
 	    })
+	    $(function(){
+    		$("#searchBar").keyup(function(){
+	    		var search = $("#searchBar").val().tolowerCase();
+	    		console.log(search)
+	    		if(search != ""){
+	    			var base = new Firebase("https://magictgdeckpricer.firebaseio.com/allCards/")
+	    			base.orderByChild("imageName").startAt(search).limitToFirst(10).once("value",function(data){
+						$("#dataList").html("")
+						console.log(data.numChildren())
+						data.forEach(function(items){
+							var item = items.val()
+							$("#dataList").append("<option value='" + item.name + "'>")
+						})
+	    			})
+	    		}
+    		})
+    	})
 
 	    function refresh(){
 	    	cardStock = new Array();
@@ -249,8 +268,10 @@
 				<div class="widget">
 					<div class="wrapper-search">
 						<form class="form-inline form-search border-rd4">
-							<input placeholder="Search Cards" type="text" class="box-text">
+							<input id="searchBar" placeholder="Search Cards" list="dataList" type="text" class="box-text">
 							<a href="#"class="btn-search"></a>
+							<datalist id="dataList">
+							</datalist>
 						</form>
 					</div>
 				</div>
