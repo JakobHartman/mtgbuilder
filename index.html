@@ -25,20 +25,22 @@
 	    	
 	    })
 	    $(function(){
-    		$("#searchBar").keyup(function(){
-	    		var search = $("#searchBar").val().tolowerCase();
-	    		console.log(search)
-	    		if(search != ""){
-	    			var base = new Firebase("https://magictgdeckpricer.firebaseio.com/allCards/")
-	    			base.orderByChild("imageName").startAt(search).limitToFirst(10).once("value",function(data){
-						$("#dataList").html("")
-						console.log(data.numChildren())
-						data.forEach(function(items){
-							var item = items.val()
-							$("#dataList").append("<option value='" + item.name + "'>")
-						})
-	    			})
-	    		}
+    		$("#searchBar").keyup(function(event){
+    			if(event.keyCode != 40 || event.keyCode != 37 || event.keyCode != 38 || event.keyCode != 39){
+    				var search = $("#searchBar").val().toLowerCase();
+	    			console.log(search)
+	    			if(search != ""){
+		    			var base = new Firebase("https://magictgdeckpricer.firebaseio.com/allCards/")
+		    			base.orderByChild("imageName").startAt(search).limitToFirst(10).once("value",function(data){
+							$("#dataList").html("")
+							console.log(data.numChildren())
+							data.forEach(function(items){
+								var item = items.val()
+								$("#dataList").append("<option value='" + item.name + "'>")
+							})
+		    			})
+	    			}
+    			}
     		})
     	})
 
@@ -188,24 +190,26 @@
 				})
 				$("#cardImage" + index).attr("src","assets/img/AllSets/" + cardStock[index]["code"]  + "/" + isName + ".jpg")
 				var i = 0;
-				decks.forEach(function(child){
-					$("#dropSlotsCard" + index).append("<li id='deck" + index + "" + i + "'><a>" + child.child("name").val() + "</a></li>")
-					$("#deck" + index + "" + i).bind("click",function(){
+				if(decks != null){
+					decks.forEach(function(child){
+						$("#dropSlotsCard" + index).append("<li id='deck" + index + "" + i + "'><a>" + child.child("name").val() + "</a></li>")
+						$("#deck" + index + "" + i).bind("click",function(){
 
-						var url = child.ref().toString();
-						console.log(url)
-						var thing = $(this).attr("id").replace("deck","");
-						thing = thing.substring(0, thing.length - 1) * 1;
-						var base = new Firebase(url)
-						var s = base.child("cards").push();
-						var code = cardStock[thing]["code"];
-						var theName = cardStock[thing]["name"];
-						s.set({"name" : theName ,"owned" : false ,"set" : setName,"code":code,"image" : isName,"uuid":s.name()})
-						$('.error').text(theName + " added to " + child.child("name").val())
-						$('.error').fadeIn(400).delay(3000).fadeOut(400);
+							var url = child.ref().toString();
+							console.log(url)
+							var thing = $(this).attr("id").replace("deck","");
+							thing = thing.substring(0, thing.length - 1) * 1;
+							var base = new Firebase(url)
+							var s = base.child("cards").push();
+							var code = cardStock[thing]["code"];
+							var theName = cardStock[thing]["name"];
+							s.set({"name" : theName ,"owned" : false ,"set" : setName,"code":code,"image" : isName,"uuid":s.name()})
+							$('.error').text(theName + " added to " + child.child("name").val())
+							$('.error').fadeIn(400).delay(3000).fadeOut(400);
+						})
+						i++;
 					})
-					i++;
-				})
+				}
 				
 				$("#addToSideBoard" + index).bind("click",function(){
 					item = $(this).attr("id").replace("addToSideBoard","") * 1;
